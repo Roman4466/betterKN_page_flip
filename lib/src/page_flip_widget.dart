@@ -15,7 +15,11 @@ class PageFlipWidget extends StatefulWidget {
     this.initialIndex = 0,
     this.lastPage,
     this.isRightSwipe = false,
-  })  : assert(initialIndex < children.length, 'initialIndex cannot be greater than children length'),
+    required this.currentPage,
+    required this.currentWidget,
+    required this.currentPageIndex,
+  })  : assert(
+            initialIndex < children.length, 'initialIndex cannot be greater than children length'),
         super(key: key);
 
   final Color backgroundColor;
@@ -26,6 +30,9 @@ class PageFlipWidget extends StatefulWidget {
   final double cutoffForward;
   final double cutoffPrevious;
   final bool isRightSwipe;
+  final ValueNotifier<int> currentPage;
+  final ValueNotifier<Widget> currentWidget;
+  final ValueNotifier<int> currentPageIndex;
 
   @override
   PageFlipWidgetState createState() => PageFlipWidgetState();
@@ -54,9 +61,9 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
   void initState() {
     super.initState();
     imageData = {};
-    currentPage = ValueNotifier(-1);
-    currentWidget = ValueNotifier(Container());
-    currentPageIndex = ValueNotifier(0);
+    currentPage = widget.currentPage;
+    currentWidget = widget.currentWidget;
+    currentPageIndex = widget.currentPageIndex;
     _setUp();
   }
 
@@ -122,7 +129,9 @@ class PageFlipWidgetState extends State<PageFlipWidget> with TickerProviderState
       final pageLength = pages.length;
       final pageSize = widget.lastPage != null ? pageLength : pageLength - 1;
       if (pageNumber != pageSize && !_isLastPage) {
-        widget.isRightSwipe ? _controllers[pageNumber].value -= ratio : _controllers[pageNumber].value += ratio;
+        widget.isRightSwipe
+            ? _controllers[pageNumber].value -= ratio
+            : _controllers[pageNumber].value += ratio;
       }
     }
   }
